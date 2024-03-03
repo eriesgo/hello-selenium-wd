@@ -2,16 +2,16 @@
   "name": "hello-selenium-webdriver",
   "version": "1.0.0",
   "scripts": {
-    "test": "cucumber-js"
+    "test-with-cucumber": "cucumber-js",
+    "test-with-mocha": "npx mocha test/**/*.spec.js --timeout 60000"
   },
   "author": "eriesgo",
   "license": "Apache-2.0",
   "dependencies": {
-    "chai": "^5.1.0"
+    "selenium-webdriver": "^4.18.1"    
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.3.1",
-    "mocha": "^10.2.0",
-    "selenium-webdriver": "^4.18.1"
+    "mocha": "^10.2.0"
   }
 }

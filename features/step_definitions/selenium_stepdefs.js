@@ -1,39 +1,35 @@
 const assert = require('assert');
-const { Given, When, Then, AfterAll } = require('@cucumber/cucumber');
-const { Builder, By, Capabilities, Key } = require('selenium-webdriver');
-//const { expect } = require('chai');
+const { Given, When, Then, AfterAll, BeforeAll } = require('@cucumber/cucumber');
+const { Builder, By } = require('selenium-webdriver');
 
-//require("chromedriver");
-//const {By, Builder} = require('selenium-webdriver');
+let driver;
 
-// driver setup
-/*const capabilities = Capabilities.chrome();
-capabilities.set('chromeOptions', { "w3c": false });
-const driver = new Builder().withCapabilities(capabilities).build();*/
-
-//const driver = await new Builder().forBrowser('chrome').build();
-
-// driver setup
-const capabilities = Capabilities.chrome();
-capabilities.set('chromeOptions', { "w3c": false });
-const driver = new Builder().withCapabilities(capabilities).build();
-
-Given('I am on the Google search page', async function () {
-    await driver.get('http://www.google.com');
+BeforeAll(async function () {
+    driver = await new Builder().forBrowser('chrome').build();
 });
 
-When('I search for {string}', async function (searchTerm) {
-    const element = await driver.findElement(By.name('q'));
-    element.sendKeys(searchTerm, Key.RETURN);
-    element.submit();
-});
+Then('the page should return with {string}', async (s) => {
+    let message = await driver.findElement(By.id('message'));
+    let value = await message.getText();
+    assert.equal(s, value);
+})
 
-Then('the page title should start with {string}', { timeout: 60 * 1000 }, async function (searchTerm) {
-    const title = await driver.getTitle();
-    const isTitleStartWithCheese = title.toLowerCase().lastIndexOf(`${searchTerm}`, 0) === 0;
-    //expect(isTitleStartWithCheese).to.equal(true);
-    assert.strictEqual(isTitleStartWithCheese, true);
-});
+When('I enter {string} in the Text input', async (s) => {
+    let title = await driver.getTitle();
+    assert.equal("Web form", title);
+
+    await driver.manage().setTimeouts({ implicit: 500 });
+
+    let textBox = await driver.findElement(By.name('my-text'));
+    let submitButton = await driver.findElement(By.css('button'));
+
+    await textBox.sendKeys(s);
+    await submitButton.click();
+})
+
+Given('I am on the Selenium web page', async () => {
+    await driver.get('https://www.selenium.dev/selenium/web/web-form.html');
+})
 
 AfterAll(async function () {
     await driver.quit();
